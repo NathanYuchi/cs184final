@@ -56,7 +56,9 @@
               implement edge detection and silhouetting, an important component to cel-shading.  Silhouetting was
               achieved using sobel filtering.
 
-              <h1>Henry here too pls <3 </h1>
+              <h1>Edge detection was implemented in three iterations: 1. Silhouetting, 2. Normals-clamping, and 3. Sobel 
+              Filter Mapping. We additionally implemented some basic alternatives to shadowing and speculars in 
+              cel-shading format, and graftals.</h1>
             </p>
 
           </div>
@@ -135,7 +137,17 @@
               was done with a camera effect that shipped with Unity.  To show how edge detection and outlining are done, we used
               Sobel Filtering using three.js.
 
-              <h2>HENRY pls fill in ty <3</h2>
+              <h2>Edge detection was attempted in three iterations: 1. Silhouette shading, in which we simply overlay a slightly-enlarged mesh of the original object, mask it, and then apply a contrasting color. While this proves
+              effective for an outline, it does not capture internal edges, cross-overs, etc. To overcome this, we combined
+              two more methods: 2. Normal Clamping. Here, the view vector is crossed with the normals of the face in the 
+              fragment shader; and, given a certain threshold, say t=0.95, the magnitude of the cross is calculated to see if
+              the face is perpendicular to the view. In this sense, if the face is perpendicular, then it is safe to say it will
+              be viewed as an "edge" in the camera space, and thus should be highlighted a different color. This works for high thresholds, but fails for 1) large planes perpendicular to the view vector, and also has unappealing behavior at lower thresholds to generate thicker lines. 
+              <br>
+              Sobel filtering was another alternative, especially for objects with textures. Sobel filtering itself detects gradients, or C1 discontinuities / large changes; as such, it can detect naively a certain degree of edge behavior on textures. The output must also be clamped to preserve cel shading behavior, and also needs to be inverted (sobel filters will output edges as white, and surfaces as black, and is not as useful for making black outlines). Saito and Takahashi also recommend detection of C1 discontinuties to better detect against large changes in C1 as opposed to discontinuities. 
+              <br>
+              As an addendum, many alternative edge detection / stylization mechanisms were not operable in the standard THREE.js method, as they require edge traversal and edge objects themselves; a half-edge mesh would be more appropriate, but necessary accomodations for vertex-fragment shaders would be necessary. Saito and Takahashi also have better protections against mis-detection, but require a buffer as it needs to calculate gradients of all neighboring vertices, which would potentially be expensive without any form of cachin, etc.
+              </h2>
             </p>
 
             <h3>Honorable Mentions</h3>
@@ -156,6 +168,17 @@
               as it travels away from the source.  We also set "Color over Lifetime" so that the smoke starts darkest
               closest to the source and becomes lighter and eventually transparent.
             </p>
+            <p class="lead mb-5">
+            	As greater exploration into Non-photorealistic rendering techniques, two extra concepts were explored: 1) Graftals, which are simply randomly-added mesh patterns onto a base object to produce patterns, and 2) Billboarded Shadows.
+            	<br>
+            	Graftals should be akin to feathers or other textures, which have view-dependent behavior, with larger sizes as their faces are perpendicular to the view vector, and shrinking, or diminished behavior when parallel. Thus, it should accentuate the edge texture to emphasize outlines, while not being too busy in the actual object itself.
+            	<br>
+            	Billboarded Shadows are a quick way of implementing cast shadows, especially when it is difficult to get shaded materials to receive shadows. They simply calculate expanding quads whose bounding rays originate from the light source and point towards the ends of the bounding box of the mesh, extending backwards into the distance. This can be an excellent approximation for small particles, even with rough edges and constant opacity.
+            </p>
+
+            <h3>Optional Further Study</h3>
+            <p>An extension to the idea of view-dependent billboards is view-dependent meshes that interpolate between key meshes.
+            This ties in closely with the animation idea of "staging", in which viewing the scene or object should accentuate the key features, and even if realistically rotating an object, for example, will produce strange silhouettes, it would be necessary to alter the mesh to better highlight all its features. The key challenges would actually be having keys for the mesh, almost like blend-shapes, and having a simple method of interpolation, that goes beyond the abilities of THREE.js.</p>
 
 
           </div>
@@ -239,9 +262,9 @@
             </ul>
             <h3> Henry Sun</h3>
             <ul>
-              <li>Coffee</li>
-              <li>Tea</li>
-              <li>Milk</li>
+              <li>Edge Detection</li>
+              <li>THREE.js demos and scripts, dat.GUI gui</li>
+              <li>Graftals, ShadowMap, initial Non-Photorealistic Rendering research, and THREE.js Miscellanei</li>
             </ul>
 
           </div>
