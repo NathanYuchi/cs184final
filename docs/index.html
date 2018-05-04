@@ -29,7 +29,7 @@
     <!-- Header -->
     <header class="masthead d-flex">
       <div class="container text-center my-auto">
-        <h1 class="mb-1">CS184 Final Project - Milestone</h1>
+        <h1 class="mb-1">CS184 Final Project</h1>
         <h3 class="mb-5">
           <em>Nathan Yuchi</em> </br>
           <em>Kyan Russell</em> </br>
@@ -40,67 +40,210 @@
     </header>
 
     <!-- About -->
-    <section class="content-section bg-light" id="about">
+    <section class="content-section bg-light" id="abstract">
       <div class="container">
         <div class="row">
           <div class="col-lg-10 mx-auto">
-            <h2>Accomplishments Thus Far</h2>
+            <h2>Abstract</h2>
             <p class="lead mb-5">
-              So far we've implemented a basic cel shader and have played around with other
-              non-realistic shading effects.  In the following section the results of the
-              different techniques are shown.  The first is the basic cel shader done in openGL
-              where we look at the diffuse lighting intensity and break the color into discrete
-              sections and force the color to be one of the calculated colors.
+              In this project we looked at cel shading: how it's done and how we can modify it, but we also
+              looked at other graphical effects as well.  We chose this topic because all the members in our
+              group liked games and cartoons that used the effect.  In this project we first implemented cel shading
+              by modifying part 5 of project 3-2.  We performed cel shading by computing the diffuse lightning and
+              then clamped the lightining to cut-offs,resulting in a select number of colors.
+               We then used Unity to create an interactive cel-shaded image with sliders
+              that changed thresholds in the shader, resulting in different images.  We also used three.js to
+              implement edge detection and silhouetting, an important component to cel-shading.  Silhouetting was
+              achieved using sobel filtering.
+
+              <h1>Henry here too pls <3 </h1>
             </p>
-            <p class="lead mb-5">
-              In the second shading technique a "graftal" technique is used.  In this shading technique
-              a mesh is tiled as a repeated pattern onto another element.  It ideally has view-size
-              dependence where the features are largest when viewed perpendicularly and smallest
-              when viewed head on.
-            </p>
-            <p class="lead mb-5">
-              The last shading technique that we got to was shadow mapping.  Most of the code for shadow
-              maping is already covered in three.js.  Shadow mapping is a method to create dynamic shadows,
-              meaning the shadows darkness, direction, and length change depending on variables such as camera
-              angle and position, object position and light angle, position, and intensity.  In the third photo
-              we can see red silhouettes around the pot, showing a silhouetting algorithm.  Silhouetting is done by
-              clamping if the cross product of the normal and the camera view vector is greater than a predetermined
-              number.
-            </p>
+
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="content-section bg-white" id="tech">
+      <div class="container">
         <div class="row">
           <div class="col-lg-10 mx-auto">
-            <h2>Preliminary Results</h2>
-            <img style="max-width:75%" src = "img/pot.png">
+            <h2>Technical Approach</h2>
             <p class="lead mb-5">
-              Cel Shader
+              To make the demo we decided to use Unity because we couldn't get custom models to be properly
+              cel shaded.  The first major step was to learn how to use Unity.  After learning the basics of
+              Unity, we write the shader and apply it to a model in the scene.  For the shader we calculate
+              the dot product of the surface normal and the light direction.  We then check to see which
+              threshold the dot product falls into and calculate the color with a itensity value that we assign
+              to each bucket.
+              <pre>
+                float _Cut1 = .95;
+		float _Cut2 = .75;
+		float _Cut3 = .25;
+
+                half4 LightingCel(SurfaceOutput s, half3 lightDir, half atten) {
+			half NdotL = dot(s.Normal, lightDir);
+
+		    float intensity1 = 1.0; // intensity of most intense section
+		    float intensity2 = 0.75;
+		    float intensity3 = 0.5;
+		    float intensity4 = 0.05; // intensity of least intense section
+
+		    float val;
+ 		    if (NdotL > _Cut1)
+		        val = intensity1;
+		    else if (NdotL > _Cut2)
+		        val = intensity2;
+		    else if (NdotL > _Cut3)
+		        val = intensity3;
+		    else
+		        val = intensity4;
+
+			half4 c;
+			c.rgb = s.Albedo * _LightColor0.rgb * (val * atten * 2);
+			c.a = s.Alpha;
+			return c;
+		}
+              </pre>
             </p>
-            <img style="max-width:75%" src = "img/graftal.png">
             <p class="lead mb-5">
-              Graftal Shading Technique
+            We add sliders to our scene in Unity that allow us to directly mutate values inside
+            of shaders.  In this case, the sliders affect the values <code>_Cut1, _Cut2, _Cut3</code>.By changing
+            these variables, we   We do
+            this by adding a script component to each game object that we want to see changes on.  We then add
+            the script to each slider so that when a slider's value is changed, the slider's value is passed into
+            the script and the corresponding cut number is changed.
             </p>
-            <img style="max-width:75%" src = "img/shadow.png">
+            <pre>
+
+              public class SetCut : MonoBehaviour
+              {
+              	public void changeValue1(float newCut1) {
+              		this.GetComponent<Renderer>().material.SetFloat("_Cut1", newCut1);
+              	}
+                public void changeValue2(float newCut2) {
+              		this.GetComponent<Renderer>().material.SetFloat("_Cut2", newCut2);
+              	}
+              	public void changeValue3(float newCut3) {
+              		this.GetComponent<Renderer>().material.SetFloat("_Cut3", newCut3);
+              	}
+              }
+            </pre>
+            <h3>Edge Detection</h3>
             <p class="lead mb-5">
-              Shadoing Mapping + Silhouetting Algorithm
+              A key component in getting that cartoon feel with cel-shading is outlining.  The edge outline we did in Unity
+              was done with a camera effect that shipped with Unity.  To show how edge detection and outlining are done, we used
+              Sobel Filtering using three.js.
+
+              <h2>HENRY pls fill in ty <3</h2>
             </p>
+
+            <h3>Honorable Mentions</h3>
+            <p class="lead mb-5">
+              In our proposal and in our milestone presentation we mentioned that we wanted to apply cel-shading
+              to colloids such as smoke and clouds.  Ultimately this was too difficult given the time limitations
+              that we had.  Other groups did smoke and cloud simulation as their final projects and didn't even have to
+              consider shading them in a non-photorealistic manner.  We did create an alternative to actually cel-shading
+              colloids.  We took inspiration from the smoke and cloud effects from Legend of Zelda: Wind Waker where
+              multiple 2D toon cloud and smoke "puffs" are emitted.  The 2D puff images are also billboarded so that
+              they always appear "full" without making them look two dimensional.
+            </p>
+            <p class="lead mb-5">
+              We start with a particle emitter, a GameObject given to us through base Unity.  We then create a smoke
+              puff texture.  In this case, we just created a smoke puff .png file with a transparent background using
+              Photoshop.  We change the texture of the particles in the emitter to the newly created texture.  We set the
+              "Size over Lifetime" property of each the puffs so that they grow over time.  This simulates smoke spreading out
+              as it travels away from the source.  We also set "Color over Lifetime" so that the smoke starts darkest
+              closest to the source and becomes lighter and eventually transparent.
+            </p>
+
+
           </div>
         </div>
+        <div class = "container">
+          <div class = "row">
+
+            <div class ="col-sm-5" >
+              <img  src="img/wwbomb.gif" style="max-height:330px">
+              <div class="caption">
+                <p>Legend of Zelda: Windwaker's Bomb Animation</p>
+              </div>
+            </div>
+            <div class ="col-sm-2" ></div>
+            <div class ="col-sm-5">
+              <img  src="img/smoke.gif" style="max-height:330px">
+              <div class="caption">
+                <p>Our Smoke Animation</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section bg-light" id="results">
+      <div class="container">
         <div class="row">
           <div class="col-lg-10 mx-auto">
-            <h2>Reflection</h2>
+            <h2>Results</h2>
             <p class="lead mb-5">
-              Cel shading seems to be a popular topic and there are many tutorials for it on the internet.
-              The code needed for cel shading is also relatively simple and short.  Because of the amount of
-              resources available on the topic already we explored other shading experiments, the graftal
-              technique as explained above and shadow mapping.
+
             </p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section bg-white" id="ref">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h2>References</h2>
             <p class="lead mb-5">
-              Because we are slightly ahead of schedule we can begin work on what we listed in the "what we
-              hope to accomplish" section of the project proposal.  In our case, we are interested in cel-shading
-              or non-realistic shading smoke, vapor, and/or clouds.  There doesn't seem as many resources
-              available for shading non-solid objects and shading these new materials will be more of a challenge.
+              <a href = "http://rbwhitaker.wikidot.com/toon-shader">http://rbwhitaker.wikidot.com/toon-shader</a>
+              <br />
+              <a href = "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.97.570&rep=rep1&type=pdf">Real-Time Rendering of Cartoon Smoke and Clouds</a>
+              <br />
+              GOOCH, B., AND GOOCH, A. 2001. Non-photorealistic rendering. AK Peters, Natick, MA
+            </br>
+                Saito and Takahashi. 1990. Comprehensible Rendering of 3-D Shapes.
+
             </p>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section bg-light" id="contrib">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h2>Contributions</h2>
+            <p class="lead mb-5">
+
+            </p>
+            <h3> Nathan Yuchi</h3>
+            <ul>
+              <li>Recorded videos</li>
+              <li>Worked on cel-shading threshold GUI</li>
+              <li>Worked on webpages for milestone and final</li>
+            </ul>
+            <h3> Kyan Russell</h3>
+            <ul>
+              <li>Coffee</li>
+              <li>Tea</li>
+              <li>Milk</li>
+            </ul>
+            <h3> Henry Sun</h3>
+            <ul>
+              <li>Coffee</li>
+              <li>Tea</li>
+              <li>Milk</li>
+            </ul>
+
           </div>
         </div>
       </div>
@@ -119,15 +262,6 @@
       </div>
     </section>
 
-    <section class="content-section bg-light" id="about">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-10 mx-auto">
-            <h1><a href = "pdf.pdf">Slides Link</a></h1>
-          </div>
-        </div>
-      </div>
-    </section>
 
 
     <!-- Scroll to Top Button-->

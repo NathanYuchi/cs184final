@@ -87,7 +87,7 @@ h6 {
   height: auto;
   padding-top: 8rem;
   padding-bottom: 8rem;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.1) 100%), url("../img/bg-.jpg");
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.1) 100%), url("../img/back.png");
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -97,7 +97,15 @@ h6 {
   font-size: 4rem;
   margin: 0;
   padding: 0;
+  color: white;
 }
+.masthead h3 {
+  font-size: 2rem;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
 
 @media (min-width: 992px) {
   .masthead {
