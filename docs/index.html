@@ -138,15 +138,22 @@
               was done with a camera effect that shipped with Unity.  To show how edge detection and outlining are done, we used
               Sobel Filtering using three.js.
 
-              Edge detection was attempted in three iterations: 1. Silhouette shading, in which we simply overlay a slightly-enlarged mesh of the original object, mask it, and then apply a contrasting color. While this proves
-              effective for an outline, it does not capture internal edges, cross-overs, etc. To overcome this, we combined
-              two more methods: 2. Normal Clamping. Here, the view vector is crossed with the normals of the face in the
+              Edge detection was attempted in three iterations:
+              <br />
+              <br />
+
+               1. Silhouette shading, in which we simply overlay a slightly-enlarged mesh of the original object, mask it, and then apply a contrasting color. While this proves
+              effective for an outline, it does not capture internal edges, cross-overs, etc. To overcome this, use other methods:
+              <br />
+              <br />
+
+              2. Normal Clamping. Here, the view vector is crossed with the normals of the face in the
               fragment shader; and, given a certain threshold, say t=0.95, the magnitude of the cross is calculated to see if
               the face is perpendicular to the view. In this sense, if the face is perpendicular, then it is safe to say it will
-              be viewed as an "edge" in the camera space, and thus should be highlighted a different color. This works for high thresholds, but fails for 1) large planes perpendicular to the view vector, and also has unappealing behavior at lower thresholds to generate thicker lines.
+              be viewed as an "edge" in the camera space, and thus should be highlighted a different color. This works for high thresholds, but fails for large planes perpendicular to the view vector, and also has unappealing behavior at lower thresholds to generate thicker lines.
               <br />
               <br />
-              Sobel filtering was another alternative, especially for objects with textures. Sobel filtering itself detects gradients, or C1 discontinuities / large changes; as such, it can detect naively a certain degree of edge behavior on textures. The output must also be clamped to preserve cel shading behavior, and also needs to be inverted (sobel filters will output edges as white, and surfaces as black, and is not as useful for making black outlines). Saito and Takahashi also recommend detection of C1 discontinuties to better detect against large changes in C1 as opposed to discontinuities.
+              3. Sobel filtering was another alternative, especially for objects with textures. Sobel filtering itself detects gradients, or C1 discontinuities / large changes; as such, it can detect naively a certain degree of edge behavior on textures. The output must also be clamped to preserve cel shading behavior, and also needs to be inverted (sobel filters will output edges as white, and surfaces as black, and is not as useful for making black outlines). Saito and Takahashi also recommend detection of C1 discontinuties to better detect against large changes in C1 as opposed to discontinuities.
               <br />
               <br />
               As an addendum, many alternative edge detection / stylization mechanisms were not operable in the standard THREE.js method, as they require edge traversal and edge objects themselves; a half-edge mesh would be more appropriate, but necessary accomodations for vertex-fragment shaders would be necessary. Saito and Takahashi also have better protections against mis-detection, but require a buffer as it needs to calculate gradients of all neighboring vertices, which would potentially be expensive without any form of caching, etc.
@@ -315,7 +322,7 @@
           <div class="col-lg-10 mx-auto">
             <h2>Video</h2>
             <div class="embed-responsive embed-responsive-16by9">
-<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/3C7pcf-yg2A" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe src="https://www.youtube.com/embed/dFikZiijxag" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
           </div>
         </div>
