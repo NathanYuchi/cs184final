@@ -457,3 +457,17 @@ a:hover, a:focus, a:active {
     background-repeat: no-repeat;
     background-size: cover;
 }
+@media only screen and (max-device-width: 1366px) {
+    .parallax1 {
+        background-attachment: scroll;
+    }
+    .parallax2 {
+        background-attachment: scroll;
+    }
+    .parallax3 {
+        background-attachment: scroll;
+    }
+    .parallax4 {
+        background-attachment: scroll;
+    }
+}
